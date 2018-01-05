@@ -70,6 +70,8 @@ class App extends React.Component {
     this.analyzeExpenditure = this.analyzeExpenditure.bind(this);
     this.analyzeBalance = this.analyzeBalance.bind(this);
     this.updateExpenseList = this.updateExpenseList.bind(this);
+    this.welcomeUser = this.welcomeUser.bind(this);
+    this.toggleExpensePie = this.toggleExpensePie.bind(this);
   }
 
   componentDidMount() {
@@ -714,6 +716,29 @@ class App extends React.Component {
     );
   }
 
+  welcomeUser() {
+    return(
+      <h2 style={{display: 'inline-block', padding: '7px', marginLeft:'10%', width: '80%', color:'rgba(0,150,136 ,1)'}}> Welcome to WealthWatch,
+      <span style={{color: 'rgba(48,63,159 ,1)'}}>{this.state.name}
+      </span>
+      <br /><br /> Your comprehensive tool for simplified personal finance!
+      <br /><br />
+      This is your home page. Here you will get a visual overview of your current budget and recent spending behavior. This is here to help you make quick decisions in the moment, based off of historical and real-time intelligence.
+      <br /><br />
+      You can manually adjust for your balance at anytime below! You can also see your budget over time, and your expenses by category.
+      <br /><br />
+      </h2>
+      )
+  }
+
+  toggleExpensePie() {
+    if ((this.state.totalOneExpense + this.state.totalRecExpense) > 0) {
+      return (
+        <ExpenseGraph oneExpenses={this.state.one} recExpenses={this.state.rec}/>
+        )
+    }
+  }
+
   analyzeBalance() {
     if (this.calculateBalanceLeft() < 0) {
       return (
@@ -722,11 +747,11 @@ class App extends React.Component {
     }
     if (this.state.daysInMonth === this.state.currentDate.getDate()) {
       return (
-        <h2 style={{display: 'inline-block', padding: '7px',marginLeft:'10%', width: '80%', color:'rgba(0,150,136 ,1)'}}>You have <span style={{color: 'rgba(48,63,159 ,1)'}}>{this.currencySymbols()}{this.calculateBalanceLeft()}</span> left to spend or invest for this month<span style={{color:'red'}}>.</span></h2>
+        <h2 style={{display: 'inline-block', padding: '7px',marginLeft:'10%', width: '80%', color:'rgba(0,150,136 ,1)'}}>You have <span style={{color: 'rgba(48,63,159 ,1)'}}>{this.currencySymbols()}{this.calculateBalanceLeft()}</span> left to spend or invest this month<span style={{color:'red'}}>!</span></h2>
       )
     } else {
       return (
-        <h2 style={{display: 'inline-block', padding: '7px',marginLeft:'10%', width: '80%', color:'rgba(0,150,136 ,1)'}}>You have on average <span style={{color: 'rgba(48,63,159 ,1)'}}>{this.currencySymbols()}{this.calculateBalanceLeft()}</span> to spend daily for the rest of the month<span style={{color:'red'}}>.</span></h2>
+        <h2 style={{display: 'inline-block', padding: '7px',marginLeft:'10%', width: '80%', color:'rgba(0,150,136 ,1)'}}>You have an average of <span style={{color: 'rgba(48,63,159 ,1)'}}>{this.currencySymbols()}{this.calculateBalanceLeft()}</span> budgeted per day for the rest of this month<span style={{color:'red'}}>.</span></h2>
       )
     }
   }
@@ -767,15 +792,22 @@ class App extends React.Component {
                   <Link onClick={this.w3Click} to="/investor" className="bar-item">Investors</Link>
                   <br/><br/><br/>
                 </div>
+
+                {this.welcomeUser()}
+                <br /><br />
                 <InputBalance currency={this.state.currency} updateCurrency={this.updateCurrency} currencySymbols={this.currencySymbols} updateUser={this.updateUser} currentEmail={this.state.currentEmail} /><br />
                 {this.analyzeExpenditure()}
                 {this.analyzeBalance()}<br /><br />
                 <canvas id="averageExpensePie"/>
+                <br />
+                {/*this.toggleExpensePie()*/}
+                <ExpenseGraph oneExpenses={this.state.one} recExpenses={this.state.rec}/>
+                <br /><br /><br />
                 <Graph renderEPie={this.renderAverageExpensePie} renderGraph={this.renderGraph} loading={this.state.loading} renderBankGraph={this.renderBankGraph} updateBankInfo={this.updateBankInfo} one={this.state.one} rec={this.state.rec} currentEmail={this.state.currentEmail} />
 
-                <button 
-                  onClick={(event) => {this.setLogoutState(event, props.history)} } 
-                  className="btn btn-danger" 
+                <button
+                  onClick={(event) => {this.setLogoutState(event, props.history)} }
+                  className="btn btn-danger"
                 >
                   Logout
                 </button>
@@ -791,15 +823,17 @@ class App extends React.Component {
                   <Link onClick={this.w3Click} to="/bank" className="bar-item">Bank</Link>
                   <Link onClick={this.w3Click} to="/investor" className="bar-item">Investors</Link>
                 </div>
-                <br/><br/><br/>
+                <br/><br/>
+                {/*<ExpenseGraph oneExpenses={this.state.one} recExpenses={this.state.rec}/>*/}
+
                 <Expenses currencySymbols={this.currencySymbols} updateUser={this.updateUser} currentEmail={this.state.currentEmail} />
                 <br /><br />
                 <ExpenseTable updateExpenseList={this.updateExpenseList} currentEmail={this.state.currentEmail} currencySymbols={this.currencySymbols} one={this.state.one} rec={this.state.rec} />
                 <br />
                 <div className="expenseButtonGroup">
-                  <button 
-                    onClick={(event) => {this.setLogoutState(event, props.history)} } 
-                    className="btn btn-danger expenseButton" 
+                  <button
+                    onClick={(event) => {this.setLogoutState(event, props.history)} }
+                    className="btn btn-danger expenseButton"
                   >
                     Logout
                   </button>
@@ -818,9 +852,9 @@ class App extends React.Component {
                 <br/><br/><br/>
                 {/*<RetirementCalculator currency={this.currencySymbols(this.state.currency)}/>*/}
                 <NPVCalculator currency={this.currencySymbols(this.state.currency)} />
-                <button 
-                  onClick={(event) => {this.setLogoutState(event, props.history)} } 
-                  className="btn btn-danger" 
+                <button
+                  onClick={(event) => {this.setLogoutState(event, props.history)} }
+                  className="btn btn-danger"
                 >
                   Logout
                 </button>
@@ -838,16 +872,16 @@ class App extends React.Component {
                 <br/><br/><br/>
                 <Plaid renderSelectGraph={this.renderSelectGraph} banks={this.state.banks} updateBanks={this.updateBanks} loading={this.loading} renderBankGraph={this.renderBankGraph} updateBankInfo={this.updateBankInfo} email={ this.state.currentEmail }/>
                 <br /><br /><br /><br />
-                <button 
-                  onClick={(event) => {this.setLogoutState(event, props.history)} } 
-                  className="btn btn-danger" 
+                <button
+                  onClick={(event) => {this.setLogoutState(event, props.history)} }
+                  className="btn btn-danger"
                 >
                   Logout
                 </button>
                 <a href="#widget" style={{margin:'7px'}} onClick={props.resetUser} className="btn btn-default">Reset Expenses</a>
               </div>
             )} />
-          </Switch>          
+          </Switch>
           </MuiThemeProvider>
         </div>
       );
